@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5 pt-3">
+  <div id="carouselExampleAutoplaying" class="carousel slide mb-4" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img src="https://sazo.vn/storage/sliders/pc-1-slide.jpg" class="d-block w-100" alt="slide1">
+      </div>
+      <div class="carousel-item">
+        <img src="https://sazo.vn/storage/sliders/pc-banner-2-1.jpg" class="d-block w-100" alt="slide2">
+      </div>
+      <div class="carousel-item">
+        <img src="https://sazo.vn/storage/sliders/pc-banner-3.jpg" class="d-block w-100" alt="slide3">
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+
+  <h3 class="text-center mb-3">Sản phẩm phổ biến</h3>
+  <div class="row gx-4 gy-4">
+    {% for product in page_obj %}
+    <div class="col-12 col-sm-6 col-md-3 mb-4">
+      <a href="{% url 'product_detail' product.id %}" style="text-decoration: none; color: inherit;">
+        <div class="card h-100 shadow-sm">
+          {% if product.image %}
+          <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+          {% endif %}
+          <div class="card-body">
+            <h5>{{ product.name }}</h5>
+            <p class="text-primary">{{ product.formatted_price }}</p>
+            {% if product.formatted_delprice %}
+            <p class="text-decoration-line-through text-danger">{{ product.formatted_delprice }}</p>
+            {% endif %}
+          </div>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="d-flex justify-content-center mt-4">
+    <nav>
+      <ul class="pagination">
+        {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+          {% if num == page_obj.number %}
+            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+          {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+          {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+# ===== Django & Python =====
+*.pyc
+*.pyo
+__pycache__/
+*.pyd
+*.so
+*.log
+
+# ===== Django specific =====
+db.sqlite3
+media/
+staticfiles/
+*.pot
+*.mo
+*.log
+
+# ===== Virtual environment =====
+venv/
+env/
+ENV/
+.venv/
+.env/
+Scripts/
+Include/
+Lib/
+bin/
+share/
+
+# ===== IDE / Editor files =====
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# ===== System / OS =====
+.DS_Store
+Thumbs.db
+
+# ===== Environment variables =====
+*.env
+.env.local
+.env.production
+.env.development
+
+# ===== PyCharm and others =====
+*.iml
+*.ipr
+*.iws
+
+# ===== pytest, coverage =====
+.coverage
+htmlcov/
+.tox/
+.pytest_cache/
+
+# ===== Migrations (optional, nếu bạn chỉ push code khởi tạo) =====
+# comment dòng này lại nếu muốn giữ migration
+# */migrations/
+# !*/migrations/__init__.py

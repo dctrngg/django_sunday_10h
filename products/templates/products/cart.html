@@ -1,0 +1,38 @@
+
+{% load humanize %}
+
+<h1>🛒 Giỏ hàng của bạn</h1>
+
+{% if items %}
+<table border="1" cellpadding="10">
+  <tr>
+    <th>Sản phẩm</th>
+    <th>Giá</th>
+    <th>Số lượng</th>
+    <th>Tổng</th>
+    <th>Hành động</th>
+  </tr>
+
+  {% for item in items %}
+  <tr>
+    <td>{{ item.product.name }}</td>
+    <td>{{ item.product.formatted_price }}</td>
+    <td>
+      <form action="{% url 'update_quantity' item.id %}" method="post">
+        {% csrf_token %}
+        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" style="width: 60px;">
+        <button type="submit">Cập nhật</button>
+      </form>
+    </td>
+    <td>{{ item.formatted_price }}</td>
+    <td><a href="{% url 'remove_from_cart' item.id %}">Xóa</a></td>
+  </tr>
+  {% endfor %}
+</table>
+
+<h3>Tổng cộng: {{ order.total_price|intcomma }} VNĐ</h3>
+
+  
+{% else %}
+<p>Giỏ hàng của bạn trống.</p>
+{% endif %}
