@@ -25,6 +25,23 @@
     </button>
   </div>
 
+
+  <form method="get" class="filter-form" style="margin-bottom: 20px;">
+    <input type="text" name="q" placeholder="Tìm kiếm sản phẩm..." value="{{ query|default:'' }}">
+    
+    <select name="brand">
+        <option value="all">Tất cả thương hiệu</option>
+        {% for b in brands %}
+            <option value="{{ b }}" {% if b == selected_brand %}selected{% endif %}>{{ b }}</option>
+        {% endfor %}
+    </select>
+
+    <input type="number" name="min_price" placeholder="Giá tối thiểu" value="{{ min_price|default:'' }}">
+    <input type="number" name="max_price" placeholder="Giá tối đa" value="{{ max_price|default:'' }}">
+    
+    <button type="submit">Lọc</button>
+</form>
+
   <h3 class="text-center mb-3">Sản phẩm phổ biến</h3>
   <div class="row gx-4 gy-4">
     {% for product in page_obj %}

@@ -17,7 +17,7 @@ INSTALLED_APPS = [
     'users',
     'accounts',
     'products',
-        'django.contrib.humanize',
+    'django.contrib.humanize',
 
    
 ]
