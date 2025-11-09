@@ -1,0 +1,24 @@
+<h1>{% if blog %}Edit Blog{% else %}New Blog{% endif %}</h1>
+
+<form method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  <label>Title</label><br>
+  <input type="text" name="title" value="{{ blog.title|default_if_none:'' }}"><br><br>
+
+  <label>Content</label><br>
+  <textarea name="content" rows="5">{{ blog.content|default_if_none:'' }}</textarea><br><br>
+
+  <label>Image</label><br>
+  {% if blog.image %}
+    <img src="{{ blog.image.url }}" width="150"><br>
+  {% endif %}
+  <input type="file" name="image"><br><br>
+
+  <label>
+    <input type="checkbox" name="is_published" {% if blog.is_published %}checked{% endif %}>
+    Published
+  </label><br><br>
+
+  <button type="submit">Save</button>
+  <a href="{% url 'blog_list' %}">Cancel</a>
+</form>

@@ -145,3 +145,54 @@ def cart_view(request):
     }
     return render(request, 'products/cart.html', context)
 
+
+
+
+# VIEWS CỦA TRANG BLOG
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Blog
+
+def blog_list(request):
+    blogs = Blog.objects.all().order_by('-created_at')
+    return render(request, 'blog/blog_list.html', {'blogs': blogs})
+
+def blog_detail(request, pk):
+    blog = get_object_or_404(Blog, pk=pk)
+    return render(request, 'blog/blog_detail.html', {'blog': blog})
+
+def blog_create(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        is_published = request.POST.get('is_published') == 'on'
+        image = request.FILES.get('image')
+
+        blog = Blog(title=title, content=content, is_published=is_published)
+        if image:
+            blog.image = image
+        blog.save()
+        return redirect('blog_list')
+
+    return render(request, 'blog/blog_form.html')
+
+def blog_update(request, pk):
+    blog = get_object_or_404(Blog, pk=pk)
+    if request.method == 'POST':
+        blog.title = request.POST.get('title')
+        blog.content = request.POST.get('content')
+        blog.is_published = request.POST.get('is_published') == 'on'
+
+        if request.FILES.get('image'):
+            blog.image = request.FILES.get('image')
+
+        blog.save()
+        return redirect('blog_list')
+
+    return render(request, 'blog/blog_form.html', {'blog': blog})
+
+def blog_delete(request, pk):
+    blog = get_object_or_404(Blog, pk=pk)
+    if request.method == 'POST':
+        blog.delete()
+        return redirect('blog_list')
+    return render(request, 'blog/blog_confirm_delete.html', {'blog': blog})

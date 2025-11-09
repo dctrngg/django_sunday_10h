@@ -84,6 +84,21 @@ class ShippingAddress(models.Model):
 
     def __str__(self):
         return f"{self.address}, {self.city}"
+    
+
+from django.utils import timezone
+
+class Blog(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    image = models.ImageField(upload_to='blog_images/', blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_published = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.title
+
 
 
 

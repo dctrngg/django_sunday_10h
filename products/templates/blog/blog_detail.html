@@ -1,0 +1,6 @@
+<h1>{{ blog.title }}</h1>
+{% if blog.image %}
+  <img src="{{ blog.image.url }}" width="300">
+{% endif %}
+<p>{{ blog.content }}</p>
+<a href="{% url 'blog_list' %}">Back</a>
