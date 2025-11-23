@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User  # dùng user đăng nhập hiện tại
+from django.contrib.auth.models import User 
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.conf import settings
 
@@ -98,7 +98,20 @@ class Blog(models.Model):
 
     def __str__(self):
         return self.title
+    
 
+class Comment(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    content = models.TextField(max_length=1000)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
 
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Bình luận'
+        verbose_name_plural = 'Bình luận'
 
-
+    def __str__(self):
+        return f"{self.user.username} - {self.product.name[:30]}"
