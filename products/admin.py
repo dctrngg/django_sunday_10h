@@ -1,5 +1,12 @@
 from django.contrib import admin
-from .models import Product, Order, OrderItem, ShippingAddress
+from .models import Product, Order, OrderItem, ShippingAddress, Comment
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('id', 'product', 'user', 'content', 'created_at')
+    search_fields = ('product__name', 'user__username', 'content')
+    list_filter = ('created_at',)
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):

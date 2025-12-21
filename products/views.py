@@ -209,3 +209,26 @@ def blog_delete(request, pk):
         blog.delete()
         return redirect('blog_list')
     return render(request, 'blog/blog_confirm_delete.html', {'blog': blog})
+
+
+
+# ====================== USER PROFILE ======================
+@login_required
+def my_profile(request):
+    user = request.user
+
+    # Lấy tất cả bình luận của user hiện tại (đã active hoặc chưa đều hiển thị ở profile cá nhân)
+    user_comments = Comment.objects.filter(user=user, is_active=True).order_by('-created_at')
+
+    # Các thống kê khác (tùy chọn)
+    total_orders = Order.objects.filter(user=user, complete=True).count()
+    total_comments = user_comments.count()
+
+    context = {
+        'profile_user': user,
+        'user_comments': user_comments,     # Thêm dòng này
+        'total_orders': total_orders,
+        'total_comments': total_comments,
+    }
+
+    return render(request, 'products/my_profile.html', context)
