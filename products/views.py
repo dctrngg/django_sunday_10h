@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
-from .models import Product, Order, OrderItem, Comment
+from .models import Product, Order, OrderItem, Comment, Feedback, Blog
 import json
 
 
@@ -219,6 +219,7 @@ def my_profile(request):
 
     # Lấy tất cả bình luận của user hiện tại (đã active hoặc chưa đều hiển thị ở profile cá nhân)
     user_comments = Comment.objects.filter(user=user, is_active=True).order_by('-created_at')
+    user_feedbacks = Feedback.objects.filter(user=user).order_by('-created_at')
 
     # Các thống kê khác (tùy chọn)
     total_orders = Order.objects.filter(user=user, complete=True).count()
@@ -226,9 +227,56 @@ def my_profile(request):
 
     context = {
         'profile_user': user,
-        'user_comments': user_comments,     # Thêm dòng này
+        'user_comments': user_comments, 
         'total_orders': total_orders,
         'total_comments': total_comments,
+        'user_feedbacks': user_feedbacks,
     }
 
     return render(request, 'products/my_profile.html', context)
+
+
+@login_required
+def edit_profile(request):
+    user = request.user
+
+    if request.method == 'POST':
+        username = request.POST.get('username', user.username)
+        email = request.POST.get('email', user.email)
+        first_name = request.POST.get('first_name', user.first_name)
+        last_name = request.POST.get('last_name', user.last_name)
+
+
+
+        # Cập nhật thông tin người dùng
+        user.username = username
+        user.email = email
+        user.first_name = first_name
+        user.last_name = last_name
+        user.save()
+
+        messages.success(request, 'Cập nhật thông tin cá nhân thành công!')
+        return redirect('my_profile')
+
+    return render(request, 'products/edit_profile.html', {'profile_user': user})
+
+# ====================== PHẢN HỒI NGƯỜI DÙNG ======================
+@login_required
+def submit_feedback(request):
+    if request.method == 'POST':
+        subject = request.POST.get('subject', '').strip()
+        message = request.POST.get('message', '').strip()
+
+        if not subject or not message:
+            messages.error(request, "Vui lòng điền đầy đủ thông tin phản hồi.")
+        else:
+            Feedback.objects.create(
+                user=request.user,
+                subject=subject,
+                message=message
+            )
+            messages.success(request, "Cảm ơn bạn đã gửi phản hồi!")
+
+        return redirect('my_profile')
+
+    return render(request, 'products/submit_feedback.html')

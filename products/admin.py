@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Order, OrderItem, ShippingAddress, Comment
+from .models import Product, Order, OrderItem, ShippingAddress, Comment, Feedback
 
 
 @admin.register(Comment)
@@ -32,3 +32,10 @@ class OrderItemAdmin(admin.ModelAdmin):
 class ShippingAddressAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'address', 'city', 'state', 'zipcode', 'date_added')
     search_fields = ('user__username', 'address', 'city')
+
+
+@admin.register(Feedback)
+class FeedbackAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'subject', 'created_at')
+    search_fields = ('user__username', 'subject', 'message')
+    list_filter = ('created_at',)

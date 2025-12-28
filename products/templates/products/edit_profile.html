@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Chỉnh sửa hồ sơ{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h3 class="mb-0">Chỉnh sửa hồ sơ cá nhân</h3>
+                </div>
+
+                <div class="card-body p-5">
+
+                    <!-- Hiển thị messages (thành công hoặc lỗi) -->
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <div class="text-center mb-5">
+                        <!-- Avatar mặc định (có thể thay bằng ảnh thật sau này) -->
+                        <img src="https://via.placeholder.com/150?text={{ profile_user.username|slice:":2"|upper }}"
+                             alt="Avatar"
+                             class="rounded-circle img-thumbnail"
+                             style="width: 150px; height: 150px; object-fit: cover; background-color: #e9ecef;">
+
+                        <h4 class="mt-3">{{ profile_user.get_full_name|default:profile_user.username }}</h4>
+                        <p class="text-muted">{{ profile_user.email }}</p>
+                    </div>
+
+                    <!-- Form chỉnh sửa -->
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="first_name" class="form-label fw-bold">Họ</label>
+                                <input type="text" name="first_name" id="first_name"
+                                       class="form-control form-control-lg"
+                                       value="{{ profile_user.first_name }}"
+                                       placeholder="Ví dụ: Nguyễn">
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label for="last_name" class="form-label fw-bold">Tên</label>
+                                <input type="text" name="last_name" id="last_name"
+                                       class="form-control form-control-lg"
+                                       value="{{ profile_user.last_name }}"
+                                       placeholder="Ví dụ: Văn A">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="username" class="form-label fw-bold">Tên đăng nhập</label>
+                            <input type="text" name="username" id="username"
+                                   class="form-control form-control-lg"
+                                   value="{{ profile_user.username }}"
+                                   required>
+                            <div class="form-text">Không thể trùng với người dùng khác.</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="email" class="form-label fw-bold">Email</label>
+                            <input type="email" name="email" id="email"
+                                   class="form-control form-control-lg"
+                                   value="{{ profile_user.email }}"
+                                   required>
+                            <div class="form-text">Chúng tôi sẽ gửi thông báo đơn hàng qua email này.</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="avatar" class="form-label fw-bold">Ảnh đại diện</label>
+                            <input type="file" name="avatar" id="avatar"
+                                   class="form-control form-control-lg"
+                                   accept="image/*">
+                            <div class="form-text">Tải lên ảnh đại diện mới (tùy chọn).</div>
+
+                        <hr class="my-5">
+
+                        <div class="d-grid gap-3 d-md-flex justify-content-md-between">
+                            <a href="{% url 'my_profile' %}" class="btn btn-outline-secondary btn-lg px-5">
+                                ← Quay lại hồ sơ
+                            </a>
+
+                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                                Lưu thay đổi
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

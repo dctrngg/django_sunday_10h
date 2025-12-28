@@ -1,86 +1,126 @@
-{% extends "base.html" %} <!-- adjust to your base template -->
+{% extends "base.html" %}
 
-{% block title %}My Profile{% endblock %}
+{% block title %}Hồ sơ cá nhân{% endblock %}
 
 {% block content %}
 <div class="container my-5">
-    <h2 class="mb-4">My Profile</h2>
+    <h2 class="mb-4">Hồ sơ cá nhân</h2>
 
     <div class="row">
+        <!-- Phần thông tin cơ bản + avatar mặc định -->
         <div class="col-md-4 text-center mb-4">
-            {% if profile_user.avatar %}
-            <img src="{{ profile_user.avatar.url }}" alt="Avatar" class="img-fluid rounded-circle"
-                style="width: 200px; height: 200px; object-fit: cover;">
-            {% else %}
-            <img src="/media/avatars/default.png" alt="Default Avatar" class="img-fluid rounded-circle"
-                style="width: 200px; height: 200px; object-fit: cover;">
-            {% endif %}
-            <h4 class="mt-3">{{ profile_user.name|default:"Anonymous" }}</h4>
+           <!-- Avatar mặc định -->
+{% if profile_user.profile.avatar %}
+    <img src="{{ profile_user.profile.avatar.url }}" alt="Avatar" class="rounded-circle img-thumbnail"
+         style="width: 150px; height: 150px; object-fit: cover; background-color: #e9ecef;">
+{% else %}
+    <img src="https://via.placeholder.com/150?text={{ profile_user.username|slice:":2"|upper }}"
+         alt="Avatar"
+         class="rounded-circle img-thumbnail"
+         style="width: 150px; height: 150px; object-fit: cover; background-color: #e9ecef;">
+{% endif %}
+            <h4 class="mt-3">
+                {% if profile_user.get_full_name %}
+                    {{ profile_user.get_full_name }}
+                {% else %}
+                    {{ profile_user.username }}
+                {% endif %}
+            </h4>
             <p class="text-muted">{{ profile_user.email }}</p>
+
+            <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary btn-sm mt-2">
+                Chỉnh sửa hồ sơ
+            </a>
         </div>
 
+        <!-- Phần chi tiết thông tin -->
         <div class="col-md-8">
-            <div class="card">
+            <div class="card mb-4">
                 <div class="card-header">
-                    <h5>Profile Information</h5>
+                    <h5>Thông tin cá nhân</h5>
                 </div>
                 <div class="card-body">
-                    <p><strong>Name:</strong> {{ profile_user.name|default:"Not set" }}</p>
-                    <p><strong>Email:</strong> {{ profile_user.email }}</p>
-                    <p><strong>Age:</strong>
-                        {% if profile_user.age %}
-                        {{ profile_user.age }}
+                    <p><strong>Tên đăng nhập:</strong> {{ profile_user.username }}</p>
+                    <p><strong>Họ và tên:</strong> 
+                        {% if profile_user.get_full_name %}
+                            {{ profile_user.get_full_name }}
                         {% else %}
-                        Not specified
+                            <span class="text-muted">Chưa đặt</span>
                         {% endif %}
                     </p>
+                    <p><strong>Email:</strong> {{ profile_user.email }}</p>
+                    <p><strong>Ngày tham gia:</strong> {{ profile_user.date_joined|date:"d/m/Y" }}</p>
 
-                    <hr>
-
-                    <h6>Activity Summary</h6>
-                    <ul>
-                        <li>Total completed orders: <strong>{{ total_orders }}</strong></li>
-                        <li>Total comments left: <strong>{{ total_comments }}</strong></li>
-                        <!-- <li>Items in wishlist: <strong>{{ wishlist_count }}</strong></li> -->
-                    </ul>
-
-                    <!-- Thêm vào trong card-body hoặc một card mới -->
                     <hr class="my-4">
 
-                    <h5 class="mb-4">Bình luận của tôi ({{ total_comments }})</h5>
+                    <h6>Thống kê hoạt động</h6>
+                    <ul class="list-unstyled">
+                        <li>• Đơn hàng đã hoàn thành: <strong>{{ total_orders }}</strong></li>
+                        <li>• Bình luận sản phẩm: <strong>{{ total_comments }}</strong></li>
+                        <li>• Phản hồi gửi cho shop: <strong>{{ user_feedbacks|length }}</strong></li>
+                    </ul>
+                </div>
+            </div>
 
+            <!-- Bình luận của tôi -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Bình luận của tôi ({{ total_comments }})</h5>
+                </div>
+                <div class="card-body">
                     {% if user_comments %}
-                    <div class="list-group">
-                        {% for comment in user_comments %}
-                        <div class="list-group-item list-group-item-action mb-3">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h6 class="mb-1">
-                                    <a href="{% url 'product_detail' comment.product.id %}"
-                                        class="text-primary text-decoration-none">
-                                        {{ comment.product.name }}
-                                    </a>
-                                </h6>
-                                <small class="text-muted">{{ comment.created_at|date:"d/m/Y H:i" }}</small>
-                            </div>
-                            <p class="mb-1">{{ comment.content|linebreaks }}</p>
-                            {% if not comment.is_active %}
-                            <span class="badge bg-warning text-dark">Đang chờ duyệt</span>
-                            {% endif %}
+                        <div class="list-group">
+                            {% for comment in user_comments %}
+                                <div class="list-group-item mb-3">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">
+                                            <a href="{% url 'product_detail' comment.product.id %}" class="text-primary text-decoration-none">
+                                                {{ comment.product.name }}
+                                            </a>
+                                        </h6>
+                                        <small class="text-muted">{{ comment.created_at|date:"d/m/Y H:i" }}</small>
+                                    </div>
+                                    <p class="mb-1">{{ comment.content|linebreaks }}</p>
+                                    {% if not comment.is_active %}
+                                        <span class="badge bg-warning text-dark">Đang chờ duyệt</span>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
-                    </div>
                     {% else %}
-                    <p class="text-muted fst-italic">Bạn chưa có bình luận nào.</p>
+                        <p class="text-muted fst-italic">Bạn chưa bình luận sản phẩm nào.</p>
                     {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 
-                    <!-- Nút xem thêm nếu có nhiều bình luận (tùy chọn) -->
-                    {% if user_comments|length > 10 %}
-                    <div class="text-center mt-4">
-                        <a href="#" class="btn btn-outline-secondary">Xem thêm bình luận</a>
-                    </div>
+    <!-- Phần Phản hồi của tôi -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Phản hồi của tôi ({{ user_feedbacks|length }})</h5>
+                    <a href="{% url 'submit_feedback' %}" class="btn btn-success btn-sm">
+                        Gửi phản hồi mới
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if user_feedbacks %}
+                        <div class="list-group">
+                            {% for feedback in user_feedbacks %}
+                                <div class="list-group-item mb-3">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">{{ feedback.subject }}</h6>
+                                        <small class="text-muted">{{ feedback.created_at|date:"d/m/Y H:i" }}</small>
+                                    </div>
+                                    <p class="mb-1">{{ feedback.message|linebreaks }}</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted fst-italic">Bạn chưa gửi phản hồi nào. Hãy cho chúng tôi biết ý kiến để cải thiện dịch vụ nhé!</p>
                     {% endif %}
-
-
                 </div>
             </div>
         </div>
