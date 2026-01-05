@@ -247,7 +247,6 @@ def edit_profile(request):
         last_name = request.POST.get('last_name', user.last_name)
 
 
-
         # Cập nhật thông tin người dùng
         user.username = username
         user.email = email
